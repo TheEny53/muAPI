@@ -23,6 +23,9 @@ class Artist(models.Model):
     wiki_link = models.URLField(blank=False, null=False)
     picture_link = models.URLField(blank=True, null=True)
 
+    class Meta:
+        ordering = ('name',)
+
     def __str__(self):
         return "{}".format(self.name)
 
@@ -40,6 +43,9 @@ class Album(models.Model):
     wiki_link = models.URLField(blank=False, null=False)
     picture_link = models.URLField(blank=True, null=True)
 
+    class Meta:
+        ordering = ('name',)
+
     def __str__(self):
        return "{} - {}".format(self.artist, self.name)
 
@@ -51,13 +57,15 @@ class Genre(models.Model):
     year_of_establishment = models.IntegerField(null=True, blank=True, validators=YEAR_VALIDATORS)
     wiki_link = models.URLField(blank=False, null=True)
 
+    class Meta:
+        ordering = ('name',)
+
     def __str__(self):
         return "{}".format(self.name)
 
 
 class Song(models.Model):
     """Describing a Song, containing all necessary metadata"""
-
     name = models.CharField(max_length=255, null=False, blank=False)
     artist = models.ForeignKey(to=Artist, on_delete=models.CASCADE, blank=False)
     album = models.ManyToManyField(Album, blank=True, null=True)
@@ -67,6 +75,9 @@ class Song(models.Model):
     wiki_link = models.URLField(blank=False, null=False)
     picture_link = models.URLField(blank=True, null=True)
     genre = models.ForeignKey(Genre, on_delete=models.CASCADE, blank=True, null=True)
+
+    class Meta:
+        ordering = ('name',)
 
     def __str__(self):
         return "{} - {}".format(self.name, self.artist)
