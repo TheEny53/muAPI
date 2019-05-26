@@ -15,7 +15,7 @@ YEAR_VALIDATORS = [
 
 class Artist(models.Model):
     """Describing an Artist, containing all necessary metadata"""
-    name = models.CharField(max_length=255, null=False, blank=False, primary_key=True)
+    name = models.CharField(max_length=255, null=False, blank=False)
     founding_year = models.IntegerField(null=True, blank=True, validators=YEAR_VALIDATORS)
     founding_country = models.CharField(max_length=2, blank=True, null=True)
     is_active = models.BooleanField(null=False, blank=False)
@@ -52,7 +52,7 @@ class Album(models.Model):
 
 class Genre(models.Model):
     """Describing a Genre, containing all necessary metadata"""
-    name = models.CharField(max_length=255, null=False, blank=False, primary_key=True)
+    name = models.CharField(max_length=255, null=False, blank=False)
     country_of_origin = models.CharField(max_length=2, null=True, blank=True)
     year_of_establishment = models.IntegerField(null=True, blank=True, validators=YEAR_VALIDATORS)
     wiki_link = models.URLField(blank=False, null=True)

@@ -29,7 +29,7 @@ class ListGenresView(generics.ListAPIView):
     serializer_class = GenreSerializer
 
 
-class DetailSongView(generics.RetrieveUpdateDestroyAPIView):
+class DetailSongView(generics.RetrieveAPIView):
     """
     GET songs/:id/
     """
@@ -49,7 +49,7 @@ class DetailSongView(generics.RetrieveUpdateDestroyAPIView):
             )
 
 
-class DetailAlbumView(generics.RetrieveUpdateDestroyAPIView):
+class DetailAlbumView(generics.RetrieveAPIView):
     """
     GET albums/:id/
     """
@@ -64,19 +64,48 @@ class DetailAlbumView(generics.RetrieveUpdateDestroyAPIView):
         except Album.DoesNotExist:
             return Response(
                 data={
-                    "message": "Song with id: {} does not exist".format(kwargs["pk"])
+                    "message": "Album with id: {} does not exist".format(kwargs["pk"])
                 },
                 status=status.HTTP_404_NOT_FOUND
             )
 
 
-class DetailArtistView(generics.RetrieveUpdateDestroyAPIView):
+class DetailArtistView(generics.RetrieveAPIView):
+    # View is non-editable
     """
     GET artists/:id/
     """
+    queryset = Artist.objects.all()
+    serializer_class = ArtistSerializer
+
+    def get(self, request, *args, **kwargs):
+        try:
+            a_artist = self.queryset.get(pk=kwargs["pk"])
+            return Response(ArtistSerializer(a_artist).data)
+        except Artist.DoesNotExist:
+            return Response(
+                data={
+                    "message": "Artist with id: {} does not exist".format(kwargs["pk"])
+                },
+                status=status.HTTP_404_NOT_FOUND
+            )
 
 
-class DetailGenreView(generics.RetrieveUpdateDestroyAPIView):
+class DetailGenreView(generics.RetrieveAPIView):
     """
     GET genres/:id/
     """
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializer
+
+    def get(self, request, *args, **kwargs):
+        try:
+            a_genre = self.queryset.get(pk=kwargs["pk"])
+            return Response(GenreSerializer(a_genre).data)
+        except Genre.DoesNotExist:
+             return Response(
+                data={
+                    "message": "Genre with id: {} does not exist".format(kwargs["pk"])
+                },
+                status=status.HTTP_404_NOT_FOUND
+            )
