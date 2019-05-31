@@ -3,7 +3,7 @@ from rest_framework.views import status
 from rest_framework import generics
 from rest_framework.response import Response
 from .models import *
-from .serializers import *
+from .serializers import SongSerializer, AlbumSerializer, GenreSerializer, ArtistSerializer
 
 
 class ListSongsView(generics.ListAPIView):
