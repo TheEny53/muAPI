@@ -15,20 +15,25 @@ class ListSongsView(generics.ListAPIView):
     serializer_class = SongSerializer
 
     def post(self, request, *args, **kwargs):
-        a_song = Song.objects.create(
-            artist=Artist.objects.get(pk=request.data["artist"]),
-            name=request.data["name"],
-            rating=request.data["rating"],
-            release_date=request.data["release_date"],
-            length=request.data["length"],
-            wiki_link=request.data["wiki_link"],
-            picture_link=request.data["picture_link"],
-            genre=Genre.objects.get(pk=request.data["genre"]))
-        a_song.album.add(Album.objects.get(pk=request.data["album"]))
-        return Response(
-            data=SongSerializer(a_song).data,
-            status=status.HTTP_201_CREATED
-        )
+        if self.request.version == 'v1':
+            a_song = Song.objects.create(
+                artist=Artist.objects.get(pk=request.data["artist"]),
+                name=request.data["name"],
+                rating=request.data["rating"],
+                release_date=request.data["release_date"],
+                length=request.data["length"],
+                wiki_link=request.data["wiki_link"],
+                picture_link=request.data["picture_link"],
+                genre=Genre.objects.get(pk=request.data["genre"]))
+            a_song.album.add(Album.objects.get(pk=request.data["album"]))
+            return Response(
+                data=SongSerializer(a_song).data,
+                status=status.HTTP_201_CREATED
+            )
+        if self.request.version == 'v2':
+             return Response(
+                status=status.HTTP_501_NOT_IMPLEMENTED
+            )
 
 
 class ListAlbumsView(generics.ListAPIView):
@@ -36,22 +41,27 @@ class ListAlbumsView(generics.ListAPIView):
     serializer_class = AlbumSerializer
 
     def post(self, request, *args, **kwargs):
-        a_album = Album.objects.create(
-            name=request.data["name"],
-            release_date=request.data["release_date"],
-            artist=Artist.objects.get(pk=request.data["artist"]),
-            length=request.data["length"],
-            produced_at=request.data["produced_at"],
-            producer=request.data["producer"],
-            rating=request.data["rating"],
-            label=request.data["label"],
-            wiki_link=request.data["wiki_link"],
-            picture_link=request.data["picture_link"]
-        )
-        return Response(
-            data=AlbumSerializer(a_album).data,
-            status=status.HTTP_201_CREATED
-        )
+        if self.request.version == 'v1':
+            a_album = Album.objects.create(
+                name=request.data["name"],
+                release_date=request.data["release_date"],
+                artist=Artist.objects.get(pk=request.data["artist"]),
+                length=request.data["length"],
+                produced_at=request.data["produced_at"],
+                producer=request.data["producer"],
+                rating=request.data["rating"],
+                label=request.data["label"],
+                wiki_link=request.data["wiki_link"],
+                picture_link=request.data["picture_link"]
+            )
+            return Response(
+                data=AlbumSerializer(a_album).data,
+                status=status.HTTP_201_CREATED
+            )
+        if self.request.version == 'v2':
+             return Response(
+                status=status.HTTP_501_NOT_IMPLEMENTED
+            )
 
 
 class ListArtistsView(generics.ListAPIView):
