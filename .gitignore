@@ -109,3 +109,6 @@ venv.bak/
 
 # private folders
 snippets/
+
+# blob files
+*.sqlite3

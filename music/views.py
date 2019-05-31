@@ -8,10 +8,27 @@ from .serializers import *
 
 class ListSongsView(generics.ListAPIView):
     """
-    Provides a get method handler.
+    GET songs/
+    POST songs/
     """
     queryset = Song.objects.all()
     serializer_class = SongSerializer
+
+    def post(self, request, *args, **kwargs):
+        a_song = Song.objects.create(
+            artist=Artist.objects.get(pk=request.data["artist"]),
+            name=request.data["name"],
+            rating=request.data["rating"],
+            release_date=request.data["release_date"],
+            length=request.data["length"],
+            wiki_link=request.data["wiki_link"],
+            picture_link=request.data["picture_link"],
+            genre=Genre.objects.get(pk=request.data["genre"]))
+        a_song.album.add(Album.objects.get(pk=request.data["album"]))
+        return Response(
+            data=SongSerializer(a_song).data,
+            status=status.HTTP_201_CREATED
+        )
 
 
 class ListAlbumsView(generics.ListAPIView):
@@ -22,6 +39,21 @@ class ListAlbumsView(generics.ListAPIView):
 class ListArtistsView(generics.ListAPIView):
     queryset = Artist.objects.all()
     serializer_class = ArtistSerializer
+
+    def post(self, request, *args, **kwargs):
+        a_artist = Artist.objects.create(
+            name=request.data["name"],
+            founding_year=request.data["founding_year"],
+            founding_country=request.data["founding_country"],
+            is_active=request.data["is_active"],
+            rating=request.data["rating"],
+            wiki_link=request.data["wiki_link"],
+            picture_link=request.data["picture_link"]
+        )
+        return Response(
+            data=ArtistSerializer(a_artist).data,
+            status=status.HTTP_201_CREATED
+        )
 
 
 class ListGenresView(generics.ListAPIView):
@@ -103,7 +135,7 @@ class DetailGenreView(generics.RetrieveAPIView):
             a_genre = self.queryset.get(pk=kwargs["pk"])
             return Response(GenreSerializer(a_genre).data)
         except Genre.DoesNotExist:
-             return Response(
+            return Response(
                 data={
                     "message": "Genre with id: {} does not exist".format(kwargs["pk"])
                 },
