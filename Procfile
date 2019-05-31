@@ -1,1 +1,1 @@
-web: bin/newrelic-admin run-program bin/python restapi/manage.py  gunicorn restapi.wsgi
+web: newrelic-admin run-program gunicorn restapi.wsgi
