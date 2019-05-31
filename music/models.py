@@ -68,7 +68,7 @@ class Song(models.Model):
     """Describing a Song, containing all necessary metadata"""
     name = models.CharField(max_length=255, null=False, blank=False)
     artist = models.ForeignKey(to=Artist, on_delete=models.CASCADE, blank=False)
-    album = models.ManyToManyField(Album, blank=True, null=True)
+    album = models.ManyToManyField(Album, blank=True)
     rating = models.CharField(max_length=1, choices=RATING, blank=False, null=False)
     release_date = models.DateField(null=True, blank=True)
     length = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
