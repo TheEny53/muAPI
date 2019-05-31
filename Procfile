@@ -1,1 +1,1 @@
-web: NEW_RELIC_CONFIG_FILE=newrelic.ini newrelic-admin run-program gunicorn restapi.wsgi
+web: bin/newrelic-admin run-program bin/python restapi/manage.py  gunicorn restapi.wsgi
