@@ -1,3 +1,4 @@
+import json
 from django.urls import reverse
 from rest_framework.test import APITestCase, APIClient
 from rest_framework.views import status
@@ -55,17 +56,6 @@ class BaseViewTest(APITestCase):
             )
         )
 
-    def fetch_an_album(self, pk=0):
-        return self.client.get(
-            reverse(
-                "album-detail",
-                kwargs={
-                    "version": "v1",
-                    "pk": pk
-                }
-            )
-        )
-
     def fetch_single(self, pk=0, revUrl=""):
         if revUrl != "":
             return self.client.get(
@@ -77,6 +67,18 @@ class BaseViewTest(APITestCase):
                     }
                 )
             )
+
+    def post_request(self, revUrl, **kwargs):
+        return self.client.post(
+            reverse(
+                revUrl,
+                kwargs={
+                    "version": kwargs["version"]
+                }
+            ),
+            data=json.dumps(kwargs["data"]),
+            content_type='application/json'
+        )
 
     def setUp(self):
         # create test data
@@ -107,6 +109,48 @@ class BaseViewTest(APITestCase):
         self.valid_genre_id = 1
 
         self.invalid_id = 100
+
+        self.valid_song_data = {
+            "name": "Paradise City",
+            "artist": self.valid_artist_id,
+            "album": self.valid_album_id,
+            "rating": "3",
+            "wiki_link": "wiki.com/gnr",
+            "picture_link": "wiki.com/gnr",
+            "release_date": "1970-05-18",
+            "length": "4.53",
+            "genre": self.valid_genre_id
+        }
+
+        self.valid_artist_data = {
+            "name": "Guns'n'Roses",
+            "founding_year": 1985,
+            "founding_country": "US",
+            "is_active": True,
+            "rating": "3",
+            "wiki_link": "w.com",
+            "picture_link": "p.com"
+        }
+
+        self.valid_genre_data = {
+            "name": "Rock",
+            "country_of_origin": "US",
+            "year_of_establishment": 1950,
+            "wiki_link": "w.com"
+        }
+
+        self.valid_album_data = {
+            "name": "Welcome to the Jungle",
+            "release_date": "1987-05-04",
+            "artist": self.valid_artist_id,
+            "length": "56.57",
+            "produced_at": "NYC",
+            "producer": "Rick Rubin",
+            "rating": "4",
+            "label": "American Recordings",
+            "wiki_link": "w.com",
+            "picture_link": "p.com"
+        }
 
 
 class GetAllTest(BaseViewTest):
@@ -228,3 +272,51 @@ class GetSingleTest(BaseViewTest):
             "Genre with id: {} does not exist".format(self.invalid_id)
         )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class PostSingleTest(BaseViewTest):
+    def test_create_song(self):
+        response = self.post_request(
+            version="v1",
+            data=self.valid_song_data,
+            revUrl="songs-all"
+        )
+        jso = json.loads(response.content)
+        jso.pop("pk", None)
+        jso.pop("album", None)
+        self.valid_song_data.pop("album", None)
+        self.assertEqual(jso, self.valid_song_data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_create_artist(self):
+        response = self.post_request(
+            version="v1",
+            data=self.valid_artist_data,
+            revUrl="artists-all"
+        )
+        jso = json.loads(response.content)
+        jso.pop("pk", None)
+        self.assertEqual(jso, self.valid_artist_data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_create_genre(self):
+        response = self.post_request(
+            version="v1",
+            data=self.valid_genre_data,
+            revUrl="genres-all"
+        )
+        jso = json.loads(response.content)
+        jso.pop("pk", None)
+        self.assertEqual(jso, self.valid_genre_data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_create_album(self):
+        response = self.post_request(
+            version="v1",
+            data=self.valid_album_data,
+            revUrl="albums-all"
+        )
+        jso = json.loads(response.content)
+        jso.pop("pk", None)
+        self.assertEqual(jso, self.valid_album_data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)

@@ -35,6 +35,24 @@ class ListAlbumsView(generics.ListAPIView):
     queryset = Album.objects.all()
     serializer_class = AlbumSerializer
 
+    def post(self, request, *args, **kwargs):
+        a_album = Album.objects.create(
+            name=request.data["name"],
+            release_date=request.data["release_date"],
+            artist=Artist.objects.get(pk=request.data["artist"]),
+            length=request.data["length"],
+            produced_at=request.data["produced_at"],
+            producer=request.data["producer"],
+            rating=request.data["rating"],
+            label=request.data["label"],
+            wiki_link=request.data["wiki_link"],
+            picture_link=request.data["picture_link"]
+        )
+        return Response(
+            data=AlbumSerializer(a_album).data,
+            status=status.HTTP_201_CREATED
+        )
+
 
 class ListArtistsView(generics.ListAPIView):
     queryset = Artist.objects.all()
@@ -59,6 +77,18 @@ class ListArtistsView(generics.ListAPIView):
 class ListGenresView(generics.ListAPIView):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
+
+    def post(self, request, *args, **kwargs):
+        a_genre = Genre.objects.create(
+            name=request.data["name"],
+            country_of_origin=request.data["country_of_origin"],
+            year_of_establishment=request.data["year_of_establishment"],
+            wiki_link=request.data["wiki_link"]
+        )
+        return Response(
+            data=GenreSerializer(a_genre).data,
+            status=status.HTTP_201_CREATED
+        )
 
 
 class DetailSongView(generics.RetrieveAPIView):
