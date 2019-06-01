@@ -73,7 +73,7 @@ class ListSongsView(generics.ListAPIView):
     """
     queryset = Song.objects.all()
     serializer_class = SongSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = ( permissions.IsAuthenticatedOrReadOnly,)
 
     def post(self, request, *args, **kwargs):
         if self.request.version == 'v1':
@@ -104,7 +104,7 @@ class ListAlbumsView(generics.ListAPIView):
     """
     queryset = Album.objects.all()
     serializer_class = AlbumSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def post(self, request, *args, **kwargs):
         if self.request.version == 'v1':
@@ -137,7 +137,7 @@ class ListArtistsView(generics.ListAPIView):
     """
     queryset = Artist.objects.all()
     serializer_class = ArtistSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def post(self, request, *args, **kwargs):
         if self.request.version == 'v1':
@@ -167,7 +167,7 @@ class ListGenresView(generics.ListAPIView):
     """
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def post(self, request, *args, **kwargs):
         if self.request.version == 'v1':
@@ -194,7 +194,7 @@ class DetailSongView(generics.RetrieveAPIView):
     """
     queryset = Song.objects.all()
     serializer_class = SongSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get(self, request, *args, **kwargs):
         if self.request.version == 'v1':
@@ -240,7 +240,7 @@ class DetailAlbumView(generics.RetrieveAPIView):
 
     queryset = Album.objects.all()
     serializer_class = AlbumSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get(self, request, *args, **kwargs):
         if self.request.version == 'v1':
@@ -285,7 +285,7 @@ class DetailArtistView(generics.RetrieveAPIView):
     """
     queryset = Artist.objects.all()
     serializer_class = ArtistSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get(self, request, *args, **kwargs):
         if self.request.version == 'v1':
@@ -329,7 +329,7 @@ class DetailGenreView(generics.RetrieveAPIView):
     """
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get(self, request, *args, **kwargs):
         if self.request.version == 'v1':

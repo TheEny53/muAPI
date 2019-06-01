@@ -13,6 +13,7 @@ class BaseViewTest(APITestCase):
     client = APIClient()
 
     def setUp(self):
+        
         # create test data
         # 0. User
         self.user = User.objects.create_superuser(
@@ -196,7 +197,6 @@ class BaseViewTest(APITestCase):
         self.client.login(username=username, password=password)
         return self.token
 
-
 class AuthLoginUserTest(BaseViewTest):
     """
     Tests for the auth/login/ endpoint
@@ -264,6 +264,7 @@ class GetAllTest(BaseViewTest):
         This test ensures that all songs added in the setUp method
         exist when we make a GET request to the songs/ endpoint
         """
+        self.login_client('test_user', 'testing')
         # hit the API endpoint
         response = self.client.get(
             reverse("artists-all", kwargs={"version": "v1"})
@@ -279,6 +280,7 @@ class GetAllTest(BaseViewTest):
         This test ensures that all genres added in the setUp method
         exist when we make a GET request to the genres/ endpoint
         """
+        self.login_client('test_user', 'testing')
         # hit the API endpoint
         response = self.client.get(
             reverse("genres-all", kwargs={"version": "v1"})
@@ -294,6 +296,7 @@ class GetAllTest(BaseViewTest):
         This test ensures that all albums added in the setUp method
         exist when we make a GET request to the albums/ endpoint
         """
+        self.login_client('test_user', 'testing')
         # hit the API endpoint
         response = self.client.get(
             reverse("albums-all", kwargs={"version": "v1"})
@@ -309,6 +312,7 @@ class GetAllTest(BaseViewTest):
         This test ensures that all albums added in the setUp method
         exist when we make a GET request to the albums/ endpoint
         """
+        self.login_client('test_user', 'testing')
         # hit the API endpoint
         self.login_client('test_user', 'testing')
         response = self.client.get(
@@ -323,6 +327,7 @@ class GetAllTest(BaseViewTest):
 
 class GetSingleTest(BaseViewTest):
     def test_get_single_album(self):
+        self.login_client('test_user', 'testing')
         response = self.fetch_single(self.valid_album_id, "album-detail")
         expected = Album.objects.get(pk=self.valid_album_id)
         serialized = AlbumSerializer(expected)
@@ -337,6 +342,7 @@ class GetSingleTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_get_single_song(self):
+        self.login_client('test_user', 'testing')
         response = self.fetch_single(self.valid_song_id, "song-detail")
         expected = Song.objects.get(pk=self.valid_song_id)
         serialized = SongSerializer(expected)
@@ -351,6 +357,7 @@ class GetSingleTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_get_single_artist(self):
+        self.login_client('test_user', 'testing')
         response = self.fetch_single(self.valid_artist_id, "artist-detail")
         expected = Artist.objects.get(pk=self.valid_artist_id)
         serialized = ArtistSerializer(expected)
@@ -365,6 +372,7 @@ class GetSingleTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_get_single_genre(self):
+        self.login_client('test_user', 'testing')
         response = self.fetch_single(self.valid_genre_id, "genre-detail")
         expected = Genre.objects.get(pk=self.valid_artist_id)
         serialized = GenreSerializer(expected)
