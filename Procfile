@@ -1,1 +1,1 @@
-web: newrelic-admin run-program gunicorn restapi.wsgi
+web: gunicorn restapi.wsgi

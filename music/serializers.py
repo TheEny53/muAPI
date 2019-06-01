@@ -22,7 +22,7 @@ class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
         fields = ("pk", "name", "country_of_origin", "year_of_establishment",
-        "wiki_link")
+                  "wiki_link")
 
 class SongSerializer(serializers.ModelSerializer):
     artist = ArtistSerializer()
@@ -44,4 +44,3 @@ class SingleAlbumSerializer(serializers.ModelSerializer):
         model = Album
         fields = ("pk", "name",  "label", "release_date", "length",
                   "produced_at", "producer", "rating", "wiki_link", "picture_link", "artist")
-
