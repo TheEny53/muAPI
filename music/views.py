@@ -1,9 +1,10 @@
-from django.shortcuts import render
 from rest_framework.views import status
 from rest_framework import generics
 from rest_framework.response import Response
-from .models import *
-from .serializers import SongSerializer, AlbumSerializer, GenreSerializer, ArtistSerializer, SingleSongSerializer, SingleAlbumSerializer
+from .models import Artist, Album, Genre, Song
+from .serializers import (SongSerializer, AlbumSerializer,
+                          GenreSerializer, ArtistSerializer, 
+                          SingleSongSerializer, SingleAlbumSerializer)
 
 
 class ListSongsView(generics.ListAPIView):
