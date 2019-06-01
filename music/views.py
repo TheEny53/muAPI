@@ -127,6 +127,7 @@ class ListGenresView(generics.ListAPIView):
 class DetailSongView(generics.RetrieveAPIView):
     """
     GET songs/:id/
+    DELETE songs/:id/
     """
     queryset = Song.objects.all()
     serializer_class = SongSerializer
@@ -148,10 +149,29 @@ class DetailSongView(generics.RetrieveAPIView):
                 status=status.HTTP_501_NOT_IMPLEMENTED
             )
 
+    def delete(self, request, *args, **kwargs):
+        if self.request.version == 'v1':
+            try:
+                a_song = self.queryset.get(pk=kwargs["pk"])
+                a_song.delete()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            except Song.DoesNotExist:
+                 return Response(
+                    data={
+                        "message": "Song with id: {} does not exist".format(kwargs["pk"])
+                    },
+                    status=status.HTTP_404_NOT_FOUND
+                )
+        if self.request.version == 'v2':
+            return Response(
+                status=status.HTTP_501_NOT_IMPLEMENTED
+            )
+
 
 class DetailAlbumView(generics.RetrieveAPIView):
     """
     GET albums/:id/
+    DELETE albums/:id/
     """
 
     queryset = Album.objects.all()
@@ -164,6 +184,24 @@ class DetailAlbumView(generics.RetrieveAPIView):
                 return Response(AlbumSerializer(a_album).data)
             except Album.DoesNotExist:
                 return Response(
+                    data={
+                        "message": "Album with id: {} does not exist".format(kwargs["pk"])
+                    },
+                    status=status.HTTP_404_NOT_FOUND
+                )
+        if self.request.version == 'v2':
+            return Response(
+                status=status.HTTP_501_NOT_IMPLEMENTED
+            )
+
+    def delete(self, request, *args, **kwargs):
+        if self.request.version == 'v1':
+            try:
+                a_album = self.queryset.get(pk=kwargs["pk"])
+                a_album.delete()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            except Album.DoesNotExist:
+                 return Response(
                     data={
                         "message": "Album with id: {} does not exist".format(kwargs["pk"])
                     },
@@ -200,6 +238,24 @@ class DetailArtistView(generics.RetrieveAPIView):
                 status=status.HTTP_501_NOT_IMPLEMENTED
             )
 
+    def delete(self, request, *args, **kwargs):
+        if self.request.version == 'v1':
+            try:
+                a_artist = self.queryset.get(pk=kwargs["pk"])
+                a_artist.delete()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            except Artist.DoesNotExist:
+                 return Response(
+                    data={
+                        "message": "Artist with id: {} does not exist".format(kwargs["pk"])
+                    },
+                    status=status.HTTP_404_NOT_FOUND
+                )
+        if self.request.version == 'v2':
+            return Response(
+                status=status.HTTP_501_NOT_IMPLEMENTED
+            )
+
 
 class DetailGenreView(generics.RetrieveAPIView):
     """
@@ -215,6 +271,24 @@ class DetailGenreView(generics.RetrieveAPIView):
                 return Response(GenreSerializer(a_genre).data)
             except Genre.DoesNotExist:
                 return Response(
+                    data={
+                        "message": "Genre with id: {} does not exist".format(kwargs["pk"])
+                    },
+                    status=status.HTTP_404_NOT_FOUND
+                )
+        if self.request.version == 'v2':
+            return Response(
+                status=status.HTTP_501_NOT_IMPLEMENTED
+            )
+
+    def delete(self, request, *args, **kwargs):
+        if self.request.version == 'v1':
+            try:
+                a_genre = self.queryset.get(pk=kwargs["pk"])
+                a_genre.delete()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            except Genre.DoesNotExist:
+                 return Response(
                     data={
                         "message": "Genre with id: {} does not exist".format(kwargs["pk"])
                     },

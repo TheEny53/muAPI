@@ -45,17 +45,6 @@ class BaseViewTest(APITestCase):
                                        rating=rating, wiki_link=wiki_link,
                                        picture_link=picture_link, genre=genre)
 
-    def fetch_a_song(self, pk=0):
-        return self.client.get(
-            reverse(
-                "song-detail",
-                kwargs={
-                    "version": "v1",
-                    "pk": pk
-                }
-            )
-        )
-
     def fetch_single(self, pk=0, revUrl=""):
         if revUrl != "":
             return self.client.get(
@@ -78,6 +67,15 @@ class BaseViewTest(APITestCase):
             ),
             data=json.dumps(kwargs["data"]),
             content_type='application/json'
+        )
+
+    def delete_single(self, pk=0,  revUrl="", **kwargs):
+        return self.client.delete(
+            reverse(revUrl,
+                    kwargs={
+                        "version": kwargs["version"],
+                        "pk": pk
+            })
         )
 
     def setUp(self):
@@ -320,3 +318,61 @@ class PostSingleTest(BaseViewTest):
         jso.pop("pk", None)
         self.assertEqual(jso, self.valid_album_data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+
+class DeleteSingleTest(BaseViewTest):
+    def test_delete_song(self):
+        response = self.delete_single(
+            pk=self.valid_song_id,
+            revUrl="song-detail",
+            version="v1"
+        )
+        response_invalid = self.delete_single(
+            pk=self.invalid_id,
+            revUrl="song-detail",
+            version="v1"
+        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(response_invalid.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_album(self):
+        response = self.delete_single(
+            pk=self.valid_album_id,
+            revUrl="album-detail",
+            version="v1"
+        )
+        response_invalid = self.delete_single(
+            pk=self.invalid_id,
+            revUrl="album-detail",
+            version="v1"
+        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(response_invalid.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_genre(self):
+        response = self.delete_single(
+            pk=self.valid_genre_id,
+            revUrl="genre-detail",
+            version="v1"
+        )
+        response_invalid = self.delete_single(
+            pk=self.invalid_id,
+            revUrl="genre-detail",
+            version="v1"
+        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(response_invalid.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_artist(self):
+        response = self.delete_single(
+            pk=self.valid_artist_id,
+            revUrl="artist-detail",
+            version="v1"
+        )
+        response_invalid = self.delete_single(
+            pk=self.invalid_id,
+            revUrl="artist-detail",
+            version="v1"
+        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(response_invalid.status_code, status.HTTP_404_NOT_FOUND)
