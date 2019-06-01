@@ -31,12 +31,16 @@ class ListSongsView(generics.ListAPIView):
                 status=status.HTTP_201_CREATED
             )
         if self.request.version == 'v2':
-             return Response(
+            return Response(
                 status=status.HTTP_501_NOT_IMPLEMENTED
             )
 
 
 class ListAlbumsView(generics.ListAPIView):
+    """
+    GET albums/
+    POST albums/
+    """
     queryset = Album.objects.all()
     serializer_class = AlbumSerializer
 
@@ -59,46 +63,64 @@ class ListAlbumsView(generics.ListAPIView):
                 status=status.HTTP_201_CREATED
             )
         if self.request.version == 'v2':
-             return Response(
+            return Response(
                 status=status.HTTP_501_NOT_IMPLEMENTED
             )
 
 
 class ListArtistsView(generics.ListAPIView):
+    """
+    GET artists/
+    POST artists/
+    """
     queryset = Artist.objects.all()
     serializer_class = ArtistSerializer
 
     def post(self, request, *args, **kwargs):
-        a_artist = Artist.objects.create(
-            name=request.data["name"],
-            founding_year=request.data["founding_year"],
-            founding_country=request.data["founding_country"],
-            is_active=request.data["is_active"],
-            rating=request.data["rating"],
-            wiki_link=request.data["wiki_link"],
-            picture_link=request.data["picture_link"]
-        )
-        return Response(
-            data=ArtistSerializer(a_artist).data,
-            status=status.HTTP_201_CREATED
-        )
+        if self.request.version == 'v1':
+            a_artist = Artist.objects.create(
+                name=request.data["name"],
+                founding_year=request.data["founding_year"],
+                founding_country=request.data["founding_country"],
+                is_active=request.data["is_active"],
+                rating=request.data["rating"],
+                wiki_link=request.data["wiki_link"],
+                picture_link=request.data["picture_link"]
+            )
+            return Response(
+                data=ArtistSerializer(a_artist).data,
+                status=status.HTTP_201_CREATED
+            )
+        if self.request.version == 'v2':
+            return Response(
+                status=status.HTTP_501_NOT_IMPLEMENTED
+            )
 
 
 class ListGenresView(generics.ListAPIView):
+    """
+    GET genres/
+    POST genres/
+    """
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
 
     def post(self, request, *args, **kwargs):
-        a_genre = Genre.objects.create(
-            name=request.data["name"],
-            country_of_origin=request.data["country_of_origin"],
-            year_of_establishment=request.data["year_of_establishment"],
-            wiki_link=request.data["wiki_link"]
-        )
-        return Response(
-            data=GenreSerializer(a_genre).data,
-            status=status.HTTP_201_CREATED
-        )
+        if self.request.version == 'v1':
+            a_genre = Genre.objects.create(
+                name=request.data["name"],
+                country_of_origin=request.data["country_of_origin"],
+                year_of_establishment=request.data["year_of_establishment"],
+                wiki_link=request.data["wiki_link"]
+            )
+            return Response(
+                data=GenreSerializer(a_genre).data,
+                status=status.HTTP_201_CREATED
+            )
+        if self.request.version == 'v2':
+            return Response(
+                status=status.HTTP_501_NOT_IMPLEMENTED
+            )
 
 
 class DetailSongView(generics.RetrieveAPIView):
@@ -109,15 +131,20 @@ class DetailSongView(generics.RetrieveAPIView):
     serializer_class = SongSerializer
 
     def get(self, request, *args, **kwargs):
-        try:
-            a_song = self.queryset.get(pk=kwargs["pk"])
-            return Response(SongSerializer(a_song).data)
-        except Song.DoesNotExist:
+        if self.request.version == 'v1':
+            try:
+                a_song = self.queryset.get(pk=kwargs["pk"])
+                return Response(SongSerializer(a_song).data)
+            except Song.DoesNotExist:
+                return Response(
+                    data={
+                        "message": "Song with id: {} does not exist".format(kwargs["pk"])
+                    },
+                    status=status.HTTP_404_NOT_FOUND
+                )
+        if self.request.version == 'v2':
             return Response(
-                data={
-                    "message": "Song with id: {} does not exist".format(kwargs["pk"])
-                },
-                status=status.HTTP_404_NOT_FOUND
+                status=status.HTTP_501_NOT_IMPLEMENTED
             )
 
 
@@ -130,15 +157,20 @@ class DetailAlbumView(generics.RetrieveAPIView):
     serializer_class = AlbumSerializer
 
     def get(self, request, *args, **kwargs):
-        try:
-            a_album = self.queryset.get(pk=kwargs["pk"])
-            return Response(AlbumSerializer(a_album).data)
-        except Album.DoesNotExist:
+        if self.request.version == 'v1':
+            try:
+                a_album = self.queryset.get(pk=kwargs["pk"])
+                return Response(AlbumSerializer(a_album).data)
+            except Album.DoesNotExist:
+                return Response(
+                    data={
+                        "message": "Album with id: {} does not exist".format(kwargs["pk"])
+                    },
+                    status=status.HTTP_404_NOT_FOUND
+                )
+        if self.request.version == 'v2':
             return Response(
-                data={
-                    "message": "Album with id: {} does not exist".format(kwargs["pk"])
-                },
-                status=status.HTTP_404_NOT_FOUND
+                status=status.HTTP_501_NOT_IMPLEMENTED
             )
 
 
@@ -151,15 +183,20 @@ class DetailArtistView(generics.RetrieveAPIView):
     serializer_class = ArtistSerializer
 
     def get(self, request, *args, **kwargs):
-        try:
-            a_artist = self.queryset.get(pk=kwargs["pk"])
-            return Response(ArtistSerializer(a_artist).data)
-        except Artist.DoesNotExist:
+        if self.request.version == 'v1':
+            try:
+                a_artist = self.queryset.get(pk=kwargs["pk"])
+                return Response(ArtistSerializer(a_artist).data)
+            except Artist.DoesNotExist:
+                return Response(
+                    data={
+                        "message": "Artist with id: {} does not exist".format(kwargs["pk"])
+                    },
+                    status=status.HTTP_404_NOT_FOUND
+                )
+        if self.request.version == 'v2':
             return Response(
-                data={
-                    "message": "Artist with id: {} does not exist".format(kwargs["pk"])
-                },
-                status=status.HTTP_404_NOT_FOUND
+                status=status.HTTP_501_NOT_IMPLEMENTED
             )
 
 
@@ -171,13 +208,18 @@ class DetailGenreView(generics.RetrieveAPIView):
     serializer_class = GenreSerializer
 
     def get(self, request, *args, **kwargs):
-        try:
-            a_genre = self.queryset.get(pk=kwargs["pk"])
-            return Response(GenreSerializer(a_genre).data)
-        except Genre.DoesNotExist:
+        if self.request.version == 'v1':
+            try:
+                a_genre = self.queryset.get(pk=kwargs["pk"])
+                return Response(GenreSerializer(a_genre).data)
+            except Genre.DoesNotExist:
+                return Response(
+                    data={
+                        "message": "Genre with id: {} does not exist".format(kwargs["pk"])
+                    },
+                    status=status.HTTP_404_NOT_FOUND
+                )
+        if self.request.version == 'v2':
             return Response(
-                data={
-                    "message": "Genre with id: {} does not exist".format(kwargs["pk"])
-                },
-                status=status.HTTP_404_NOT_FOUND
+                status=status.HTTP_501_NOT_IMPLEMENTED
             )
