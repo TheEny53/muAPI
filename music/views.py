@@ -45,7 +45,6 @@ class LoginView(generics.CreateAPIView):
     # This permission class will overide the global permission
     # class setting
     permission_classes = (permissions.AllowAny,)
-
     queryset = User.objects.all()
 
     def post(self, request, *args, **kwargs):
