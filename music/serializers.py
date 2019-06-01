@@ -50,3 +50,7 @@ class SingleAlbumSerializer(serializers.ModelSerializer):
         model = Album
         fields = ("pk", "name",  "label", "release_date", "length",
                   "produced_at", "producer", "rating", "wiki_link", "picture_link", "artist")
+
+class TokenSerializer(serializers.Serializer):
+    """This serializer serializes the token data"""
+    token = serializers.CharField(max_length=255)

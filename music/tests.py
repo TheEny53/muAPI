@@ -1,5 +1,6 @@
 import json
 from django.urls import reverse
+from django.contrib.auth.models import User
 from rest_framework.test import APITestCase, APIClient
 from rest_framework.views import status
 from .models import Artist, Genre, Album, Song
@@ -11,75 +12,18 @@ from .serializers import ArtistSerializer, GenreSerializer, AlbumSerializer, Son
 class BaseViewTest(APITestCase):
     client = APIClient()
 
-    @staticmethod
-    def create_artist(name="", founding_year="", founding_country="", is_active="",
-                      rating="", wiki_link="", picture_link=""):
-        if (name != "" and founding_year != "" and founding_country != ""
-                and rating != "" and is_active != "" and wiki_link != ""):
-            return Artist.objects.create(name=name, founding_year=founding_year,
-                                         founding_country=founding_country, is_active=is_active,
-                                         rating=rating, wiki_link=wiki_link,
-                                         picture_link=picture_link)
-
-    @staticmethod
-    def create_genre(name="", country_of_origin="", year_of_establishment="", wiki_link=""):
-        if name != "" and country_of_origin != "" and wiki_link != "":
-            return Genre.objects.create(name=name, country_of_origin=country_of_origin,
-                                        year_of_establishment=year_of_establishment,
-                                        wiki_link=wiki_link)
-
-    @staticmethod
-    def create_album(name="", release_date="", artist="", length="", produced_at="", producer="",
-                     rating="", label="", wiki_link="", picture_link=""):
-        if name != "" and artist != "" and rating != "" and wiki_link != "":
-            return Album.objects.create(name=name, release_date=release_date, artist=artist,
-                                        length=length, produced_at=produced_at, producer=producer, rating=rating,
-                                        label=label, wiki_link=wiki_link, picture_link=picture_link)
-
-    @staticmethod
-    def create_song(name="", release_date="",  artist="", length="",
-                    rating="", wiki_link="", picture_link="", genre=""):
-        if name != "" and artist != "" and rating != "" and wiki_link != "":
-            return Song.objects.create(name=name, release_date=release_date,
-                                       artist=artist, length=length,
-                                       rating=rating, wiki_link=wiki_link,
-                                       picture_link=picture_link, genre=genre)
-
-    def fetch_single(self, pk=0, revUrl=""):
-        if revUrl != "":
-            return self.client.get(
-                reverse(
-                    revUrl,
-                    kwargs={
-                        "version": "v1",
-                        "pk": pk
-                    }
-                )
-            )
-
-    def post_request(self, revUrl, **kwargs):
-        return self.client.post(
-            reverse(
-                revUrl,
-                kwargs={
-                    "version": kwargs["version"]
-                }
-            ),
-            data=json.dumps(kwargs["data"]),
-            content_type='application/json'
-        )
-
-    def delete_single(self, pk=0,  revUrl="", **kwargs):
-        return self.client.delete(
-            reverse(revUrl,
-                    kwargs={
-                        "version": kwargs["version"],
-                        "pk": pk
-            })
-        )
-
     def setUp(self):
+        
         # create test data
+        # 0. User
+        self.user = User.objects.create_superuser(
+            username="test_user",
+            email="test@mail.com",
+            password="testing",
+            first_name="test",
+            last_name="user",
+        )
+
         # 1. Artists
         dummy_artist = self.create_artist("Sean Paul", "1987", "JA", "True", "3",
                                           "wiki.com", "wiki.com")
@@ -150,6 +94,168 @@ class BaseViewTest(APITestCase):
             "picture_link": "p.com"
         }
 
+    @staticmethod
+    def create_artist(name="", founding_year="", founding_country="", is_active="",
+                      rating="", wiki_link="", picture_link=""):
+        if (name != "" and founding_year != "" and founding_country != ""
+                and rating != "" and is_active != "" and wiki_link != ""):
+            return Artist.objects.create(name=name, founding_year=founding_year,
+                                         founding_country=founding_country, is_active=is_active,
+                                         rating=rating, wiki_link=wiki_link,
+                                         picture_link=picture_link)
+
+    @staticmethod
+    def create_genre(name="", country_of_origin="", year_of_establishment="", wiki_link=""):
+        if name != "" and country_of_origin != "" and wiki_link != "":
+            return Genre.objects.create(name=name, country_of_origin=country_of_origin,
+                                        year_of_establishment=year_of_establishment,
+                                        wiki_link=wiki_link)
+
+    @staticmethod
+    def create_album(name="", release_date="", artist="", length="", produced_at="", producer="",
+                     rating="", label="", wiki_link="", picture_link=""):
+        if name != "" and artist != "" and rating != "" and wiki_link != "":
+            return Album.objects.create(name=name, release_date=release_date, artist=artist,
+                                        length=length, produced_at=produced_at, producer=producer, rating=rating,
+                                        label=label, wiki_link=wiki_link, picture_link=picture_link)
+
+    @staticmethod
+    def create_song(name="", release_date="",  artist="", length="",
+                    rating="", wiki_link="", picture_link="", genre=""):
+        if name != "" and artist != "" and rating != "" and wiki_link != "":
+            return Song.objects.create(name=name, release_date=release_date,
+                                       artist=artist, length=length,
+                                       rating=rating, wiki_link=wiki_link,
+                                       picture_link=picture_link, genre=genre)
+
+    def fetch_single(self, pk=0, revUrl=""):
+        if revUrl != "":
+            return self.client.get(
+                reverse(
+                    revUrl,
+                    kwargs={
+                        "version": "v1",
+                        "pk": pk
+                    }
+                )
+            )
+
+    def post_request(self, revUrl, **kwargs):
+        return self.client.post(
+            reverse(
+                revUrl,
+                kwargs={
+                    "version": kwargs["version"]
+                }
+            ),
+            data=json.dumps(kwargs["data"]),
+            content_type='application/json'
+        )
+
+    def delete_single(self, pk=0,  revUrl="", **kwargs):
+        return self.client.delete(
+            reverse(revUrl,
+                    kwargs={
+                        "version": kwargs["version"],
+                        "pk": pk
+                    })
+        )
+
+    def login_a_user(self, username="", password=""):
+        url = reverse(
+            "auth-login",
+            kwargs={
+                "version": "v1"
+            }
+        )
+        return self.client.post(
+            url,
+            data=json.dumps({
+                "username": username,
+                "password": password
+            }),
+            content_type="application/json"
+        )
+
+    def login_client(self, username="", password=""):
+        # get a token from DRF
+        response = self.client.post(
+            reverse('create-token'),
+            data=json.dumps(
+                {
+                    'username': username,
+                    'password': password
+                }
+            ),
+            content_type='application/json'
+        )
+        self.token = response.data['token']
+        # set the token in the header
+        self.client.credentials(
+            HTTP_AUTHORIZATION='Bearer ' + self.token
+        )
+        self.client.login(username=username, password=password)
+        return self.token
+
+class AuthLoginUserTest(BaseViewTest):
+    """
+    Tests for the auth/login/ endpoint
+    """
+
+    def test_login_user_with_valid_credentials(self):
+        response = self.login_a_user("test_user", "testing")
+        self.assertIn("token", response.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response = self.login_a_user("anonymous", "pass")
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+class AuthRegisterUserTest(BaseViewTest):
+    """
+    Tests for auth/register/ endpoint
+    """
+    def test_register_a_user_with_valid_data(self):
+        url = reverse(
+            "auth-register",
+            kwargs={
+                "version": "v1"
+            }
+        )
+        response = self.client.post(
+            url,
+            data=json.dumps(
+                {
+                    "username": "new_user",
+                    "password": "new_pass",
+                    "email": "new_user@mail.com"
+                }
+            ),
+            content_type="application/json"
+        )
+        # assert status code is 201 CREATED
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_register_a_user_with_invalid_data(self):
+        url = reverse(
+            "auth-register",
+            kwargs={
+                "version": "v1"
+            }
+        )
+        response = self.client.post(
+            url,
+            data=json.dumps(
+                {
+                    "username": "",
+                    "password": "",
+                    "email": ""
+                }
+            ),
+            content_type='application/json'
+        )
+        # assert status code
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
 
 class GetAllTest(BaseViewTest):
 
@@ -158,6 +264,7 @@ class GetAllTest(BaseViewTest):
         This test ensures that all songs added in the setUp method
         exist when we make a GET request to the songs/ endpoint
         """
+        self.login_client('test_user', 'testing')
         # hit the API endpoint
         response = self.client.get(
             reverse("artists-all", kwargs={"version": "v1"})
@@ -173,6 +280,7 @@ class GetAllTest(BaseViewTest):
         This test ensures that all genres added in the setUp method
         exist when we make a GET request to the genres/ endpoint
         """
+        self.login_client('test_user', 'testing')
         # hit the API endpoint
         response = self.client.get(
             reverse("genres-all", kwargs={"version": "v1"})
@@ -188,6 +296,7 @@ class GetAllTest(BaseViewTest):
         This test ensures that all albums added in the setUp method
         exist when we make a GET request to the albums/ endpoint
         """
+        self.login_client('test_user', 'testing')
         # hit the API endpoint
         response = self.client.get(
             reverse("albums-all", kwargs={"version": "v1"})
@@ -203,7 +312,9 @@ class GetAllTest(BaseViewTest):
         This test ensures that all albums added in the setUp method
         exist when we make a GET request to the albums/ endpoint
         """
+        self.login_client('test_user', 'testing')
         # hit the API endpoint
+        self.login_client('test_user', 'testing')
         response = self.client.get(
             reverse("songs-all", kwargs={"version": "v1"})
         )
@@ -216,6 +327,7 @@ class GetAllTest(BaseViewTest):
 
 class GetSingleTest(BaseViewTest):
     def test_get_single_album(self):
+        self.login_client('test_user', 'testing')
         response = self.fetch_single(self.valid_album_id, "album-detail")
         expected = Album.objects.get(pk=self.valid_album_id)
         serialized = AlbumSerializer(expected)
@@ -230,6 +342,7 @@ class GetSingleTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_get_single_song(self):
+        self.login_client('test_user', 'testing')
         response = self.fetch_single(self.valid_song_id, "song-detail")
         expected = Song.objects.get(pk=self.valid_song_id)
         serialized = SongSerializer(expected)
@@ -244,6 +357,7 @@ class GetSingleTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_get_single_artist(self):
+        self.login_client('test_user', 'testing')
         response = self.fetch_single(self.valid_artist_id, "artist-detail")
         expected = Artist.objects.get(pk=self.valid_artist_id)
         serialized = ArtistSerializer(expected)
@@ -258,6 +372,7 @@ class GetSingleTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_get_single_genre(self):
+        self.login_client('test_user', 'testing')
         response = self.fetch_single(self.valid_genre_id, "genre-detail")
         expected = Genre.objects.get(pk=self.valid_artist_id)
         serialized = GenreSerializer(expected)
@@ -274,6 +389,7 @@ class GetSingleTest(BaseViewTest):
 
 class PostSingleTest(BaseViewTest):
     def test_create_song(self):
+        self.login_client('test_user', 'testing')
         response = self.post_request(
             version="v1",
             data=self.valid_song_data,
@@ -287,6 +403,7 @@ class PostSingleTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_create_artist(self):
+        self.login_client('test_user', 'testing')
         response = self.post_request(
             version="v1",
             data=self.valid_artist_data,
@@ -298,6 +415,7 @@ class PostSingleTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_create_genre(self):
+        self.login_client('test_user', 'testing')
         response = self.post_request(
             version="v1",
             data=self.valid_genre_data,
@@ -309,6 +427,7 @@ class PostSingleTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_create_album(self):
+        self.login_client('test_user', 'testing')
         response = self.post_request(
             version="v1",
             data=self.valid_album_data,
@@ -322,6 +441,7 @@ class PostSingleTest(BaseViewTest):
 
 class DeleteSingleTest(BaseViewTest):
     def test_delete_song(self):
+        self.login_client('test_user', 'testing')
         response = self.delete_single(
             pk=self.valid_song_id,
             revUrl="song-detail",
@@ -333,9 +453,11 @@ class DeleteSingleTest(BaseViewTest):
             version="v1"
         )
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertEqual(response_invalid.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response_invalid.status_code,
+                         status.HTTP_404_NOT_FOUND)
 
     def test_delete_album(self):
+        self.login_client('test_user', 'testing')
         response = self.delete_single(
             pk=self.valid_album_id,
             revUrl="album-detail",
@@ -347,9 +469,11 @@ class DeleteSingleTest(BaseViewTest):
             version="v1"
         )
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertEqual(response_invalid.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response_invalid.status_code,
+                         status.HTTP_404_NOT_FOUND)
 
     def test_delete_genre(self):
+        self.login_client('test_user', 'testing')
         response = self.delete_single(
             pk=self.valid_genre_id,
             revUrl="genre-detail",
@@ -361,9 +485,11 @@ class DeleteSingleTest(BaseViewTest):
             version="v1"
         )
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertEqual(response_invalid.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response_invalid.status_code,
+                         status.HTTP_404_NOT_FOUND)
 
     def test_delete_artist(self):
+        self.login_client('test_user', 'testing')
         response = self.delete_single(
             pk=self.valid_artist_id,
             revUrl="artist-detail",
@@ -375,4 +501,5 @@ class DeleteSingleTest(BaseViewTest):
             version="v1"
         )
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertEqual(response_invalid.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response_invalid.status_code,
+                         status.HTTP_404_NOT_FOUND)
