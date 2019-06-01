@@ -3,7 +3,7 @@ from rest_framework.views import status
 from rest_framework import generics
 from rest_framework.response import Response
 from .models import *
-from .serializers import SongSerializer, AlbumSerializer, GenreSerializer, ArtistSerializer
+from .serializers import SongSerializer, AlbumSerializer, GenreSerializer, ArtistSerializer, SingleSongSerializer, SingleAlbumSerializer
 
 
 class ListSongsView(generics.ListAPIView):
@@ -27,7 +27,7 @@ class ListSongsView(generics.ListAPIView):
                 genre=Genre.objects.get(pk=request.data["genre"]))
             a_song.album.add(Album.objects.get(pk=request.data["album"]))
             return Response(
-                data=SongSerializer(a_song).data,
+                data=SingleSongSerializer(a_song).data,
                 status=status.HTTP_201_CREATED
             )
         if self.request.version == 'v2':
@@ -55,7 +55,7 @@ class ListAlbumsView(generics.ListAPIView):
                 picture_link=request.data["picture_link"]
             )
             return Response(
-                data=AlbumSerializer(a_album).data,
+                data=SingleAlbumSerializer(a_album).data,
                 status=status.HTTP_201_CREATED
             )
         if self.request.version == 'v2':
