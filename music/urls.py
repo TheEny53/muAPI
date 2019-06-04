@@ -14,5 +14,6 @@ urlpatterns = [
     path('artists/<int:pk>/', DetailArtistView.as_view(), name="artist-detail"),
     path('genres/<int:pk>/', DetailGenreView.as_view(), name="genre-detail"),
     path('playlists/', PlaylistView.as_view(), name="playlists-all"),
-    path('playlists/<slug:name>/', DetailPlaylistView.as_view(), name="playlists-detail")
+    path('playlists/<slug:name>/', DetailPlaylistView.as_view(), name="playlists-detail"),
+    path("songs/<slug:name>/", ListSongsByArtist.as_view(), name="songs-artist")
 ]

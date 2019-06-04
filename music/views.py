@@ -447,3 +447,10 @@ class DetailPlaylistView(generics.ListAPIView):
                     },
                     status=status.HTTP_404_NOT_FOUND
                 )
+
+class ListSongsByArtist(generics.ListAPIView):
+    serializer_class = SongSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def get_queryset(self, **kwargs):
+        return Song.objects.filter(artist__name = kwargs["name"])
