@@ -97,9 +97,11 @@ class Song(models.Model):
 
 class UserDataName(models.Model):
     """Storing the reference to the user"""
-    user = models.ForeignKey(User, editable=False, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, editable=False, on_delete=models.PROTECT)
+
     class Meta:
         abstract = True
+
 
 class Playlist(UserDataName):
     """Storing songs in playlists"""
@@ -112,4 +114,3 @@ class Playlist(UserDataName):
 
     class Meta:
         unique_together = ('name', 'user')
-
