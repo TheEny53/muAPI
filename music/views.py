@@ -5,11 +5,13 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from django.db import IntegrityError
+from django.shortcuts import redirect, reverse
 from rest_framework_jwt.settings import api_settings
 from rest_framework import permissions
 from rest_framework.response import Response
 from .models import Artist, Album, Genre, Song, Playlist
-from .serializers import (TokenSerializer, SongSerializer, AlbumSerializer,
+from .serializers import (TokenSerializer, TokenUserSerializer, SongSerializer,
+                          AlbumSerializer,
                           GenreSerializer, ArtistSerializer, PlaylistSerializer,
                           SingleSongSerializer, SingleAlbumSerializer)
 
@@ -36,10 +38,17 @@ class RegisterUsersView(generics.CreateAPIView):
                 },
                 status=status.HTTP_400_BAD_REQUEST
             )
-        User.objects.create_user(
+        user = User.objects.create_user(
             username=username, password=password, email=email
         )
-        return Response(status=status.HTTP_201_CREATED)
+        login(request, user)
+        serializer = TokenUserSerializer(data={
+            "token": jwt_encode_handler(
+                jwt_payload_handler(user)),
+            "username": username
+                })
+        serializer.is_valid()
+        return Response(data={serializer.data}, status=status.HTTP_201_CREATED)
 
 
 class LoginView(generics.CreateAPIView):
@@ -381,33 +390,32 @@ class PlaylistView(generics.ListAPIView):
     """
     permission_classes = (permissions.IsAuthenticated, )
     serializer_class = PlaylistSerializer
-   
+
     def get_queryset(self):
         user = self.request.user
         return Playlist.objects.filter(user=user)
-
 
     def post(self, request, *args, **kwargs):
         if self.request.version == 'v1':
             try:
                 a_playlist = Playlist.objects.create(
-                    description = request.data["description"],
-                    name = request.data["name"],
-                    rating = request.data["rating"],
-                    user = request.user
+                    description=request.data["description"],
+                    name=request.data["name"],
+                    rating=request.data["rating"],
+                    user=request.user
                 )
                 for i in request.data["songs"]:
                     a_playlist.songs.add(Song.objects.get(pk=i))
                 return Response(
-                    data = PlaylistSerializer(a_playlist).data,
+                    data=PlaylistSerializer(a_playlist).data,
                     status=status.HTTP_201_CREATED
                 )
             except IntegrityError:
                 return Response(
                     data={
-                        "message":"""Error creating playlist, name {} already exists.""".format(request.data["name"])
+                        "message": """Error creating playlist, name {} already exists.""".format(request.data["name"])
                     },
-                    status = status.HTTP_400_BAD_REQUEST
+                    status=status.HTTP_400_BAD_REQUEST
                 )
         if self.request.version == 'v2':
             return Response(
@@ -435,8 +443,7 @@ class DetailPlaylistView(generics.ListAPIView):
             except Playlist.DoesNotExist:
                 return Response(
                     data={
-                        "message" : "Playlist with name {} does not exist".format(kwargs["name"])
+                        "message": "Playlist with name {} does not exist".format(kwargs["name"])
                     },
-                    status = status.HTTP_404_NOT_FOUND
+                    status=status.HTTP_404_NOT_FOUND
                 )
-        
