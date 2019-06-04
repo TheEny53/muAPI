@@ -89,7 +89,7 @@ class ListSongsView(generics.ListAPIView):
                 wiki_link=request.data["wiki_link"],
                 picture_link=request.data["picture_link"],
                 genre=Genre.objects.get(pk=request.data["genre"]))
-            for i in request.data["album"]
+            for i in request.data["album"]:
                 a_song.album.add(Album.objects.get(pk=i))
             return Response(
                 data=SingleSongSerializer(a_song).data,
