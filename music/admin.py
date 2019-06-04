@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Song, Album, Artist, Genre
+from .models import Song, Album, Artist, Genre, Playlist
 
 class SongAdmin(admin.ModelAdmin):
     list_display = ('name', 'artist', 'rating', 'release_date', 'genre')
@@ -22,7 +22,12 @@ class GenreAdmin(admin.ModelAdmin):
     list_filter = ('country_of_origin', 'year_of_establishment')
     search_fields = ('name', 'country_of_origin', 'year_of_establishment')
 
+class PlaylistAdmin(admin.ModelAdmin):
+    list_display = ('name', 'rating', 'user')
+    filter_horizontal = ('songs',)
+
 admin.site.register(Song, SongAdmin)
 admin.site.register(Album, AlbumAdmin)
 admin.site.register(Artist, ArtistAdmin)
 admin.site.register(Genre, GenreAdmin)
+admin.site.register(Playlist, PlaylistAdmin)

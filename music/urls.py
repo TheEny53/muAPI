@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import *
 
-
+# URL routing for music api
 urlpatterns = [
     path('auth/register/', RegisterUsersView.as_view(), name="auth-register"),
     path('auth/login/', LoginView.as_view(), name="auth-login"),
@@ -12,5 +12,6 @@ urlpatterns = [
     path('songs/<int:pk>/', DetailSongView.as_view(), name="song-detail"),
     path('albums/<int:pk>/', DetailAlbumView.as_view(), name="album-detail"),
     path('artists/<int:pk>/', DetailArtistView.as_view(), name="artist-detail"),
-    path('genres/<int:pk>/', DetailGenreView.as_view(), name="genre-detail")
+    path('genres/<int:pk>/', DetailGenreView.as_view(), name="genre-detail"),
+    path('playlists/', PlaylistView.as_view(), name="playlists-all")
 ]

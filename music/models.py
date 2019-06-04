@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.contrib.auth.models import User
 RATING = (
     ("0", "*"),
     ("1", "**"),
@@ -92,3 +93,21 @@ class Song(models.Model):
 
     def __str__(self):
         return "{} - {}".format(self.name, self.artist)
+
+
+class UserDataName(models.Model):
+    """Storing the reference to the user"""
+    user = models.ForeignKey(User, editable=False, on_delete=models.CASCADE)
+    class Meta:
+        abstract = True
+
+class Playlist(UserDataName):
+    """Storing songs in playlists"""
+    songs = models.ManyToManyField(to=Song)
+    listen_count = models.IntegerField(editable=False, default=0)
+    description = models.TextField(max_length=1024, blank=True)
+    name = models.CharField(max_length=255, null=False, blank=False)
+    rating = models.CharField(max_length=1, choices=RATING, blank=True)
+    listen_latest = models.DateTimeField(auto_now=True)
+
+

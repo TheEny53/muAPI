@@ -7,9 +7,9 @@ from django.contrib.auth import authenticate, login
 from rest_framework_jwt.settings import api_settings
 from rest_framework import permissions
 from rest_framework.response import Response
-from .models import Artist, Album, Genre, Song
+from .models import Artist, Album, Genre, Song, Playlist
 from .serializers import (TokenSerializer, SongSerializer, AlbumSerializer,
-                          GenreSerializer, ArtistSerializer,
+                          GenreSerializer, ArtistSerializer, PlaylistSerializer,
                           SingleSongSerializer, SingleAlbumSerializer)
 
 
@@ -68,6 +68,7 @@ class LoginView(generics.CreateAPIView):
             return r
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
+
 class ListSongsView(generics.ListAPIView):
     """
     GET songs/
@@ -75,7 +76,7 @@ class ListSongsView(generics.ListAPIView):
     """
     queryset = Song.objects.all()
     serializer_class = SongSerializer
-    permission_classes = ( permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def post(self, request, *args, **kwargs):
         if self.request.version == 'v1':
@@ -88,7 +89,8 @@ class ListSongsView(generics.ListAPIView):
                 wiki_link=request.data["wiki_link"],
                 picture_link=request.data["picture_link"],
                 genre=Genre.objects.get(pk=request.data["genre"]))
-            a_song.album.add(Album.objects.get(pk=request.data["album"]))
+            for i in request.data["album"]
+                a_song.album.add(Album.objects.get(pk=i))
             return Response(
                 data=SingleSongSerializer(a_song).data,
                 status=status.HTTP_201_CREATED
@@ -365,6 +367,39 @@ class DetailGenreView(generics.RetrieveAPIView):
                     },
                     status=status.HTTP_404_NOT_FOUND
                 )
+        if self.request.version == 'v2':
+            return Response(
+                status=status.HTTP_501_NOT_IMPLEMENTED
+            )
+
+
+class PlaylistView(generics.ListAPIView):
+    """
+    GET playlists/
+    POST playlists/
+    """
+    permission_classes = (permissions.IsAuthenticated, )
+    serializer_class = PlaylistSerializer
+   
+    def get_queryset(self):
+        user = self.request.user
+        return Playlist.objects.filter(user=user)
+
+
+    def post(self, request, *args, **kwargs):
+        if self.request.version == 'v1':
+            a_playlist = Playlist.objects.create(
+                description = request.data["description"],
+                name = request.data["name"],
+                rating = request.data["rating"],
+                user = request.user
+            )
+            for i in request.data["songs"]:
+                a_playlist.songs.add(Song.objects.get(pk=i))
+            return Response(
+                data = PlaylistSerializer(a_playlist).data,
+                status=status.HTTP_201_CREATED
+            )
         if self.request.version == 'v2':
             return Response(
                 status=status.HTTP_501_NOT_IMPLEMENTED

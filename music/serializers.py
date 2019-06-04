@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Song, Album, Artist, Genre
+from .models import Song, Album, Artist, Genre, Playlist
 
 
 
@@ -50,6 +50,13 @@ class SingleAlbumSerializer(serializers.ModelSerializer):
         model = Album
         fields = ("pk", "name",  "label", "release_date", "length",
                   "produced_at", "producer", "rating", "wiki_link", "picture_link", "artist")
+
+class PlaylistSerializer(serializers.ModelSerializer):
+    """Serializes the playlist data"""
+    songs = SingleSongSerializer(many=True)
+    class Meta:
+        model = Playlist
+        fields = ("listen_count", "description", "name", "rating", "songs")
 
 class TokenSerializer(serializers.Serializer):
     """This serializer serializes the token data"""
