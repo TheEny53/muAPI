@@ -110,4 +110,6 @@ class Playlist(UserDataName):
     rating = models.CharField(max_length=1, choices=RATING, blank=True)
     listen_latest = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        unique_together = ('name', 'user')
 

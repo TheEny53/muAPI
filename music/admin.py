@@ -24,7 +24,8 @@ class GenreAdmin(admin.ModelAdmin):
 
 class PlaylistAdmin(admin.ModelAdmin):
     list_display = ('name', 'rating', 'user')
-    filter_horizontal = ('songs',)
+    def has_add_permission(self, request, obj=None):
+        return False
 
 admin.site.register(Song, SongAdmin)
 admin.site.register(Album, AlbumAdmin)

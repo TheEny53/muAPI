@@ -404,3 +404,19 @@ class PlaylistView(generics.ListAPIView):
             return Response(
                 status=status.HTTP_501_NOT_IMPLEMENTED
             )
+
+
+class DetailPlaylistView(generics.ListAPIView):
+    """
+    UPDATE playlists/:name/
+    DELETE playlists/:name/
+    """
+    permission_classes = (permissions.IsAuthenticated, )
+    serializer_class = PlaylistSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        return Playlist.objects.filter(user=user)
+
+ #   def get(self, request, *args, **kwargs):
+        
