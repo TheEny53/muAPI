@@ -1,6 +1,5 @@
 {
   "addons": [
-    "newrelic",
     "heroku-postgresql"
   ],
   "buildpacks": [
