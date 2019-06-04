@@ -3,4 +3,4 @@ djangorestframework
 djangorestframework-jwt
 gunicorn
 django_heroku
-newrelic
+coreapi

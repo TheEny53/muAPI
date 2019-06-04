@@ -95,7 +95,7 @@ class Song(models.Model):
         return "{} - {}".format(self.name, self.artist)
 
 
-class UserDataName(models.Model):
+class UserData(models.Model):
     """Storing the reference to the user"""
     user = models.ForeignKey(User, editable=False, on_delete=models.PROTECT)
 
@@ -103,7 +103,7 @@ class UserDataName(models.Model):
         abstract = True
 
 
-class Playlist(UserDataName):
+class Playlist(UserData):
     """Storing songs in playlists"""
     songs = models.ManyToManyField(to=Song)
     listen_count = models.IntegerField(editable=False, default=0)
