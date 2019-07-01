@@ -464,7 +464,7 @@ class ItemListView(generics.ListAPIView):
      queryset = ActionItem.objects.all()
      serializer_class = ActionItemSerializer
 
-     def options(self, request):
+     def options(self, request, *arg, **kwargs):
         response = HttpResponse()
         response['Access-Control-Allow-Origin'] = '*'
         response['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
