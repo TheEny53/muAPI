@@ -342,6 +342,7 @@ class DetailGenreView(generics.RetrieveAPIView):
     """
     GET genres/:id/
     DELETE genres/:id/
+    UPDATE genres/:id/
     """
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
@@ -454,3 +455,4 @@ class ListSongsByArtist(generics.ListAPIView):
 
     def get_queryset(self, **kwargs):
         return Song.objects.filter(artist__name = kwargs["name"])
+
