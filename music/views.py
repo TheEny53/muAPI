@@ -458,6 +458,7 @@ class ListSongsByArtist(generics.ListAPIView):
 
 class ItemListView(generics.RetrieveAPIView):
     serializer_class = ActionItemSerializer
+    queryset = ActionItem.objects.all()
 
     def post(self,request, *args, **kwargs):
         if self.request.version == 'v1':
