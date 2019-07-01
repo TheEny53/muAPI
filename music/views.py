@@ -457,6 +457,8 @@ class ListSongsByArtist(generics.ListAPIView):
         return Song.objects.filter(artist__name = kwargs["name"])
 
 class ItemListView(generics.ListAPIView):
+     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
     queryset = ActionItem.objects.all()
     serializer_class = ActionItemSerializer
 
