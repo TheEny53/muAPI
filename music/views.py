@@ -48,7 +48,7 @@ class RegisterUsersView(generics.CreateAPIView):
             "username": username
                 })
         serializer.is_valid()
-        return Response(data={serializer.data}, status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_201_CREATED)
 
 
 class LoginView(generics.CreateAPIView):
