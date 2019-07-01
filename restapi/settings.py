@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,8 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'music',
-    'rest_framework',
-    'corsheaders'
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -179,4 +179,4 @@ STATICFILES_DIRS = (
 
 django_heroku.settings(locals())
 
-CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_ALLOW_ALL = True
