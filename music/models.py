@@ -114,3 +114,8 @@ class Playlist(UserData):
 
     class Meta:
         unique_together = ('name', 'user')
+
+
+class ActionItem(models.Model):
+    topic = models.CharField(max_length=255, null=False)
+    nps = models.FloatField()

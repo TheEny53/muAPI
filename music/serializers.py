@@ -66,3 +66,7 @@ class TokenUserSerializer(serializers.Serializer):
     """This serializer serializes token data and user name"""
     token = serializers.CharField(max_length=255)
     username = serializers.CharField(max_length=255)
+
+class ActionItemSerializer(serializers.Serializer):
+    nps = serializers.FloatField()
+    topic = serializers.CharField(max_length=255)

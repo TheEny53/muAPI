@@ -9,11 +9,11 @@ from django.shortcuts import redirect, reverse
 from rest_framework_jwt.settings import api_settings
 from rest_framework import permissions
 from rest_framework.response import Response
-from .models import Artist, Album, Genre, Song, Playlist
+from .models import Artist, Album, Genre, Song, Playlist, ActionItem
 from .serializers import (TokenSerializer, TokenUserSerializer, SongSerializer,
                           AlbumSerializer,
                           GenreSerializer, ArtistSerializer, PlaylistSerializer,
-                          SingleSongSerializer, SingleAlbumSerializer)
+                          SingleSongSerializer, SingleAlbumSerializer, ActionItemSerializer)
 
 
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
@@ -456,3 +456,16 @@ class ListSongsByArtist(generics.ListAPIView):
     def get_queryset(self, **kwargs):
         return Song.objects.filter(artist__name = kwargs["name"])
 
+class ItemListView(generics.RetrieveAPIView):
+    serializer_class = ActionItemSerializer
+
+    def post(self,request, *args, **kwargs):
+        if self.request.version == 'v1':
+            a_item = ActionItem.objects.create(
+                topic = request.data["topic"],
+                nps = request.data["nps"]
+            )
+            return Response(
+                data=ActionItemSerializer(a_item).data,
+                status=status.HTTP_201_CREATED
+            )
