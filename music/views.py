@@ -8,7 +8,7 @@ from django.db import IntegrityError
 from django.shortcuts import redirect, reverse
 from rest_framework_jwt.settings import api_settings
 from rest_framework import permissions
-from rest_framework.response import Response
+from rest_framework.response import Response, HttpResponse
 from .models import Artist, Album, Genre, Song, Playlist, ActionItem
 from .serializers import (TokenSerializer, TokenUserSerializer, SongSerializer,
                           AlbumSerializer,
@@ -462,6 +462,15 @@ class ItemListView(generics.ListAPIView):
 
      queryset = ActionItem.objects.all()
      serializer_class = ActionItemSerializer
+
+     if request.method == "OPTIONS": 
+        response = HttpResponse()
+        response['Access-Control-Allow-Origin'] = '*'
+        response['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
+        response['Access-Control-Max-Age'] = 1000
+        # note that '*' is not valid for Access-Control-Allow-Headers
+        response['Access-Control-Allow-Headers'] = 'origin, x-csrf-token, content-type, accept'
+        return response
 
      def post(self,request, *args, **kwargs):
         if self.request.version == 'v1':
