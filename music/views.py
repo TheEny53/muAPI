@@ -459,8 +459,8 @@ class ListSongsByArtist(generics.ListAPIView):
 class ItemListView(generics.ListAPIView):
      permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
-    queryset = ActionItem.objects.all()
-    serializer_class = ActionItemSerializer
+     queryset = ActionItem.objects.all()
+     serializer_class = ActionItemSerializer
 
     def post(self,request, *args, **kwargs):
         if self.request.version == 'v1':
