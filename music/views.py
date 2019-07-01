@@ -8,7 +8,8 @@ from django.db import IntegrityError
 from django.shortcuts import redirect, reverse
 from rest_framework_jwt.settings import api_settings
 from rest_framework import permissions
-from rest_framework.response import Response, HttpResponse
+from rest_framework.response import Response
+from django.http import HttpResponse
 from .models import Artist, Album, Genre, Song, Playlist, ActionItem
 from .serializers import (TokenSerializer, TokenUserSerializer, SongSerializer,
                           AlbumSerializer,
