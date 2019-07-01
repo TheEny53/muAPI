@@ -456,9 +456,9 @@ class ListSongsByArtist(generics.ListAPIView):
     def get_queryset(self, **kwargs):
         return Song.objects.filter(artist__name = kwargs["name"])
 
-class ItemListView(generics.RetrieveAPIView):
-    serializer_class = ActionItemSerializer
+class ItemListView(generics.ListAPIView):
     queryset = ActionItem.objects.all()
+    serializer_class = ActionItemSerializer
 
     def post(self,request, *args, **kwargs):
         if self.request.version == 'v1':
