@@ -470,7 +470,8 @@ class ItemListView(generics.ListAPIView):
         response['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
         response['Access-Control-Max-Age'] = 1000
         # note that '*' is not valid for Access-Control-Allow-Headers
-        response['Access-Control-Allow-Headers'] = 'origin, x-csrf-token, content-type, accept'
+        response['Access-Control-Allow-Headers'] = 'origin, x-csrf-token, content-type/json, accept'
+        response.status_code = status.HTTP_200_OK
         return response
 
      def post(self,request, *args, **kwargs):
