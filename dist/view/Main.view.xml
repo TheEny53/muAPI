@@ -1,0 +1,20 @@
+<mvc:View
+	controllerName="sap.ui.demo.walkthrough.controller.Main"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	displayBlock="true">
+	<Shell>
+		<App class="myAppDemoWT" id="apple">
+			<pages>
+				<Page title="{i18n>homePageTitle}">
+					<content>
+                    HELLO
+					<Button
+							icon="sap-icon://hello-world"
+							press=".onOpenDialog"/>
+					</content>
+				</Page>
+			</pages>
+		</App>
+	</Shell>
+</mvc:View>
