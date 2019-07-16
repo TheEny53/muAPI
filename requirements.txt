@@ -5,3 +5,4 @@ gunicorn
 django_heroku
 django-cors-headers
 coreapi
+whitenoise
