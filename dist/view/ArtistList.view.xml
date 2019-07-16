@@ -1,0 +1,14 @@
+<mvc:View controllerName="sap.ui.demo.walkthrough.controller.ArtistList" 
+	xmlns="sap.m" 
+	xmlns:mvc="sap.ui.core.mvc">
+	<List headerText="{i18n>artistListTitle}" class="sapUiResponsiveMargin" width="auto" items="{/artists}">
+		<items>
+			<ObjectListItem title="{name}" number="{founding_year}">
+				<attributes>
+					<ObjectAttribute text="Founded in: {founding_country}"/>
+					<ObjectAttribute text="Rating: {rating}"/>
+				</attributes>
+				</ObjectListItem>
+			</items>
+		</List>
+	</mvc:View>
